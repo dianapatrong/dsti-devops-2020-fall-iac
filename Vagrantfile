@@ -16,6 +16,7 @@ Vagrant.configure("2") do |config|
     server.vm.box = "centos/7"
     # Specify the VM ip address
     server.vm.network :private_network, ip: "20.20.20.2"
+    config.vm.network "forwarded_port", guest: 22, host: 2222, host_ip: "127.0.0.1", id: 'ssh'
     # Sync playbooks in current folder with /vagrant folder in guest
     config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
     # Specify the VM specs when using the Virtualbox provisioner
@@ -37,7 +38,7 @@ Vagrant.configure("2") do |config|
     # The path to the playbooks entry point
     ansible.playbook = "playbooks/run.yml"
     # Only run the roles with these tags
-    ansible.tags = "check"
+    ansible.tags = "install"
   end
 
 end
