@@ -25,4 +25,25 @@
   debug:
     msg: "{{ gitlab_health.content }}"
 
-# Run the 2 other kind of health checks below
+# Run the other kind of health checks below
+
+- name: Check GitLab readiness
+  uri:
+    url: http://127.0.0.1/-/readiness?all=1
+    status_code: [200, 503]
+  # Register the output of the module in a variable
+  register: gitlab_readiness
+
+# Quick check of the variable to explore it
+# - name: quick check
+#   debug:
+#     msg: "{{ gitlab_readiness }}"
+
+- name: Print GitLab readiness
+  debug:
+    msg: "{{ item }}: {{ gitlab_readiness.json[item][0].status }}"
+  loop:
+    - master_check
+    - redis_check
+  when: gitlab_readiness.json[item][0].status == "failed"
+
